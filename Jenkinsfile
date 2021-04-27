@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo "Deploying the 1_network layer"
                 sh "TF_LAYER=1_network make plan"
-                sh "TF_LAYER=1_network TF_AUTO_APPROVE=true make deploy"
+                sh "TF_LAYER=1_network make deploy TF_AUTO_APPROVE=true"
             }
         }
     }
