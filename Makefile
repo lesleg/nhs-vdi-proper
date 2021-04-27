@@ -3,6 +3,7 @@ TF_ROOT=terraform/layers/${TF_LAYER}
 TF_AUTO_APPROVE = false
 BUILD_ENV = dev
 VAR_FILE = vars/${BUILD_ENV}.tfvars
+
 init:
 	cd ${TF_ROOT} && terraform init \
 	-backend-config="bucket=nhsd-dspp-dpsa-${BUILD_ENV}-terraform-state" \
