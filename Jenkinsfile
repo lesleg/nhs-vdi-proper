@@ -19,7 +19,7 @@ pipeline {
         stage('Terraform validations') {
             steps {
                 sh "make fmt-check"
-                sh "LAYER=1_network make terraform-validate"
+                sh "TF_LAYER=1_network make terraform-validate"
             }
         }
         stage('VDI deployment') {
@@ -28,9 +28,9 @@ pipeline {
                 expression {return params.RUN_TERRAFORM_DEPLOYMENT}
             }
             steps {
-                echo "Deploying the 0_base layer"
-                sh "MODULE=1_network make plan"
-                sh "MODULE=1_network make deploy"
+                echo "Deploying the 1_network layer"
+                sh "TF_LAYER=1_network make plan"
+                sh "TF_LAYER=1_network TF_AUTO_APPROVE=true make deploy"
             }
         }
     }
