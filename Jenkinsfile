@@ -34,34 +34,34 @@ pipeline {
             }
         }
     }
-//     post {
-//         success {
-//             script {
-//                 def slackSteps = load 'ci/slackSteps.groovy'
-//
-//                 slackSteps.success(params.ENVIRONMENT, params.SLACK_CHANNEL)
-//             }
-//         }
-//         aborted {
-//             script {
-//                 def slackSteps = load 'ci/slackSteps.groovy'
-//
-//                 slackSteps.aborted(params.ENVIRONMENT, params.SLACK_CHANNEL)
-//             }
-//         }
-//         unstable {
-//             script {
-//                 def slackSteps = load 'ci/slackSteps.groovy'
-//
-//                 slackSteps.unstable(params.ENVIRONMENT, params.SLACK_CHANNEL)
-//             }
-//         }
-//         failure {
-//             script {
-//                 def slackSteps = load 'ci/slackSteps.groovy'
-//
-//                 slackSteps.failure(params.ENVIRONMENT, params.SLACK_CHANNEL)
-//             }
-//         }
-//     }
+    post {
+        success {
+            script {
+                def slackSteps = load 'ci/slackSteps.groovy'
+
+                slackSteps.success(params.ENVIRONMENT, params.SLACK_CHANNEL)
+            }
+        }
+        aborted {
+            script {
+                def slackSteps = load 'ci/slackSteps.groovy'
+
+                slackSteps.aborted(params.ENVIRONMENT, params.SLACK_CHANNEL)
+            }
+        }
+        unstable {
+            script {
+                def slackSteps = load 'ci/slackSteps.groovy'
+
+                slackSteps.unstable(params.ENVIRONMENT, params.SLACK_CHANNEL)
+            }
+        }
+        failure {
+            script {
+                def slackSteps = load 'ci/slackSteps.groovy'
+
+                slackSteps.failure(params.ENVIRONMENT, params.SLACK_CHANNEL)
+            }
+        }
+    }
 }
