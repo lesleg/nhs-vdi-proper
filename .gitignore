@@ -1,0 +1,15 @@
+# Jetbrains
+.idea
+
+# terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+# certs/keys/pems
+*.crt
+*.csr
+*.key
+*.pem
+*.srl
+*id_rsa*
