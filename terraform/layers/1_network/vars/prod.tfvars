@@ -1,2 +1,2 @@
-environment             = "prod"
-account_id              = "449808325654"
+environment = "prod"
+account_id  = "449808325654"
