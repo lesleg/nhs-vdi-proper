@@ -19,6 +19,10 @@ resource "aws_vpc_endpoint" "rstudio" {
     aws_subnet.private_c.id
   ]
 
+  security_group_ids = [
+    aws_security_group.rstudio_endpoint_sg.id
+  ]
+
   tags = {
     Name        = "RStudio endpoint"
     environment = var.environment
