@@ -9,8 +9,9 @@ resource "aws_vpc_endpoint" "s3" {
 }
 
 resource "aws_vpc_endpoint" "rstudio" {
-  vpc_id       = aws_vpc.default.id
-  service_name = var.rstudio_endpoint_service_name
+  vpc_id            = aws_vpc.default.id
+  service_name      = var.rstudio_endpoint_service_name
+  vpc_endpoint_type = "Interface"
 
   subnet_ids = [
     aws_subnet.private_a.id,
