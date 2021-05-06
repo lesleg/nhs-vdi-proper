@@ -4,7 +4,7 @@ resource "aws_subnet" "private_a" {
   availability_zone = "eu-west-2a"
 
   tags = {
-    Name        = "private-a"
+    Name        = "vdi-private-a"
     project     = "vdi"
     source      = "terraform"
     environment = var.environment
@@ -17,7 +17,7 @@ resource "aws_subnet" "private_b" {
   availability_zone = "eu-west-2b"
 
   tags = {
-    Name        = "private-b"
+    Name        = "vdi-private-b"
     project     = "vdi"
     source      = "terraform"
     environment = var.environment
@@ -30,7 +30,7 @@ resource "aws_subnet" "private_c" {
   availability_zone = "eu-west-2c"
 
   tags = {
-    Name        = "private-c"
+    Name        = "vdi-private-c"
     project     = "vdi"
     source      = "terraform"
     environment = var.environment
