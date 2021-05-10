@@ -21,5 +21,6 @@ variable private_subnet_c_cidr_block {
 }
 
 variable rstudio_endpoint_service_name {}
+variable hue_endpoint_service_name {}
 
 variable s3_bucket_prefix {}
