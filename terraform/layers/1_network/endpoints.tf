@@ -45,7 +45,7 @@ resource "aws_vpc_endpoint" "hue" {
   ]
 
   tags = {
-    Name        = "hue endpoint"
+    Name        = "Hue endpoint"
     environment = var.environment
   }
 }
