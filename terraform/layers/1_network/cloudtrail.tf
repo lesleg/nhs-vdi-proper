@@ -14,7 +14,7 @@ resource "aws_cloudtrail" "cloudtrail" {
 }
 
 resource "aws_s3_bucket" "cloudtrail" {
-  bucket = "vdi-cloudtrail"
+  bucket = "${var.s3_bucket_prefix}-cloudtrail"
   acl    = "private"
 
   versioning {
