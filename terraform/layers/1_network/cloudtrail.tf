@@ -14,7 +14,7 @@ resource "aws_cloudtrail" "cloudtrail" {
 }
 
 resource "aws_s3_bucket" "cloudtrail" {
-  bucket = "vdi-cloudtrail"
+  bucket = "${var.s3_bucket_prefix}-cloudtrail"
   acl    = "private"
 
   versioning {
@@ -31,7 +31,7 @@ resource "aws_s3_bucket" "cloudtrail" {
 
   policy = <<POLICY
 {
-    "Version": "2021-04-20",
+    "Version": "2012-10-17",
     "Statement": [
         {
             "Sid": "AWSCloudTrailAclCheck",
@@ -40,7 +40,7 @@ resource "aws_s3_bucket" "cloudtrail" {
               "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:GetBucketAcl",
-            "Resource": "arn:aws:s3:::vdi-cloudtrail"
+            "Resource": "arn:aws:s3:::${var.s3_bucket_prefix}-cloudtrail"
         },
         {
             "Sid": "AWSCloudTrailWrite",
@@ -49,7 +49,7 @@ resource "aws_s3_bucket" "cloudtrail" {
               "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:PutObject",
-            "Resource": "arn:aws:s3:::vdi-cloudtrail/*",
+            "Resource": "arn:aws:s3:::${var.s3_bucket_prefix}-cloudtrail/*",
             "Condition": {
                 "StringEquals": {
                     "s3:x-amz-acl": "bucket-owner-full-control"
