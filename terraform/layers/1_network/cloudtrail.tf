@@ -31,7 +31,7 @@ resource "aws_s3_bucket" "cloudtrail" {
 
   policy = <<POLICY
 {
-    "Version": "2021-04-20",
+    "Version": "2012-10-17",
     "Statement": [
         {
             "Sid": "AWSCloudTrailAclCheck",
