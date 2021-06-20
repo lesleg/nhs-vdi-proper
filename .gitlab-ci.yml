@@ -1,0 +1,25 @@
+default:
+  before_script:
+    - source ~/.bashrc
+
+variables:
+  AWS_PROFILE: identity_dev
+
+stages:
+  - lint
+  - deploy
+
+lint-terraform:
+  stage: lint
+  script:
+    - make fmt-check
+    - TF_LAYER=1_network make terraform-validate
+
+deploy-1-network:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "Deploying the 1_network layer"
+    - TF_LAYER=1_network make plan
+    - TF_LAYER=1_network make deploy TF_AUTO_APPROVE=true
