@@ -5,10 +5,9 @@ terraform {
     encrypt = true
   }
 
-  required_version = "= 0.15.3"
+  required_version = "= 1.0.0"
 }
 
 provider "aws" {
-  region  = "eu-west-2"
-  version = "~> 3.34.0"
+  region = "eu-west-2"
 }
