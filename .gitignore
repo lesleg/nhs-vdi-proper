@@ -5,6 +5,7 @@
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+*.lock.hcl
 
 # certs/keys/pems
 *.crt
