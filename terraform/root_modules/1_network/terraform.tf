@@ -10,4 +10,13 @@ terraform {
 
 provider "aws" {
   region = "eu-west-2"
+  default_tags {
+    tags = {
+      project     = local.project
+      env         = var.environment
+      workspace   = terraform.workspace
+      source      = "terraform"
+      root_module = "1_network"
+    }
+  }
 }
