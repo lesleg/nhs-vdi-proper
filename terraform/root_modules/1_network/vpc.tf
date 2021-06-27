@@ -24,4 +24,16 @@ resource "aws_vpc_peering_connection_accepter" "ad_to_vdi" {
 data "aws_vpc_peering_connection" "ad_to_vdi" {
   owner_id = var.identity_account_id
   vpc_id   = var.ad_vpc_id
+
+  # A bit of nastiness to exclude old peering connections
+  # that have since been deleted. Deleted connections still
+  # appear in the Access account for a while because the Identity
+  # account owns the connection; this breaks the data source filtering
+  filter {
+    name   = "status-code"
+    values = [
+      "pending-acceptance",
+      "active"
+    ]
+  }
 }
