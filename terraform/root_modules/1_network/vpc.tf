@@ -30,7 +30,7 @@ data "aws_vpc_peering_connection" "ad_to_vdi" {
   # appear in the Access account for a while because the Identity
   # account owns the connection; this breaks the data source filtering
   filter {
-    name   = "status-code"
+    name = "status-code"
     values = [
       "pending-acceptance",
       "active"

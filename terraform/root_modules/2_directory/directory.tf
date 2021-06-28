@@ -5,13 +5,13 @@ resource "aws_directory_service_directory" "connector" {
   type     = "ADConnector"
 
   connect_settings {
-    customer_dns_ips  = [
+    customer_dns_ips = [
       "10.1.1.197",
       "10.1.2.237"
     ]
     customer_username = "Admin"
     vpc_id            = data.terraform_remote_state.network.outputs.vpc_id
-    subnet_ids        = [
+    subnet_ids = [
       data.terraform_remote_state.network.outputs.private_subnet_id_a,
       data.terraform_remote_state.network.outputs.private_subnet_id_b
     ]
@@ -25,7 +25,7 @@ resource "aws_directory_service_directory" "connector" {
 
 resource "aws_workspaces_directory" "example" {
   directory_id = aws_directory_service_directory.connector.id
-  subnet_ids   = [
+  subnet_ids = [
     data.terraform_remote_state.network.outputs.private_subnet_id_a,
     data.terraform_remote_state.network.outputs.private_subnet_id_b
   ]
