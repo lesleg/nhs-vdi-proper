@@ -21,5 +21,14 @@ deploy-1-network:
     - master
   script:
     - echo "Deploying the 1_network layer"
-    - TF_LAYER=1_network make plan
-    - TF_LAYER=1_network make deploy TF_AUTO_APPROVE=true
+    - MODULE=1_network make plan
+    - MODULE=1_network make deploy
+
+deploy-2-directory:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "Deploying the 2_directory layer"
+    - MODULE=2_directory make plan
+    - MODULE=2_directory make deploy
