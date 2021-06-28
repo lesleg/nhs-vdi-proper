@@ -1,6 +1,6 @@
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.default.id
-  cidr_block        = var.private_subnet_a_cidr_block
+  cidr_block        = "10.0.0.0/24"
   availability_zone = "eu-west-2a"
 
   tags = {
@@ -13,7 +13,7 @@ resource "aws_subnet" "private_a" {
 
 resource "aws_subnet" "private_b" {
   vpc_id            = aws_vpc.default.id
-  cidr_block        = var.private_subnet_b_cidr_block
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "eu-west-2b"
 
   tags = {
@@ -26,7 +26,7 @@ resource "aws_subnet" "private_b" {
 
 resource "aws_subnet" "private_c" {
   vpc_id            = aws_vpc.default.id
-  cidr_block        = var.private_subnet_c_cidr_block
+  cidr_block        = "10.0.2.0/24"
   availability_zone = "eu-west-2c"
 
   tags = {

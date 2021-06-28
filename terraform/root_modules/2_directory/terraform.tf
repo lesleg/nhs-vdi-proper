@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    key     = "vdi-network.tfstate"
+    key     = "vdi-directory.tfstate"
     region  = "eu-west-2"
     encrypt = true
   }
@@ -16,7 +16,7 @@ provider "aws" {
       env         = var.environment
       workspace   = terraform.workspace
       source      = "terraform"
-      root_module = "1_network"
+      root_module = "2_directory"
     }
   }
 }
