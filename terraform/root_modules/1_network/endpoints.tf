@@ -37,3 +37,30 @@ resource "aws_security_group" "airflow_endpoint_sg" {
     cidr_blocks = [aws_vpc.default.cidr_block]
   }
 }
+
+resource "aws_vpc_endpoint" "databricksui" {
+  vpc_id            = aws_vpc.default.id
+  service_name      = var.databricksui_endpoint_service_name
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id
+  ]
+
+  security_group_ids = [
+    aws_security_group.databricksui_endpoint_sg.id
+  ]
+
+  tags = {
+    Name        = "DatabricksUI endpoint"
+    environment = var.environment
+  }
+}
+ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
