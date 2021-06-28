@@ -58,9 +58,3 @@ resource "aws_vpc_endpoint" "databricksui" {
     environment = var.environment
   }
 }
-ingress {
-    description = "HTTP from VPC"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.default.cidr_block]
