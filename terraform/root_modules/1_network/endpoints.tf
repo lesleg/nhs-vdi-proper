@@ -38,11 +38,11 @@ resource "aws_security_group" "airflow_endpoint_sg" {
   }
 }
 
-resource "aws_vpc_endpoint" "databricksuigit " {
+resource "aws_vpc_endpoint" "databricks" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
-  service_name       = var.databricksui_endpoint_service_name
-  security_group_ids = [aws_security_group.databricksui_endpoint_sg.id]
+  service_name       = var.databricks_endpoint_service_name
+  security_group_ids = [aws_security_group.databricks_endpoint_sg.id]
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -51,13 +51,13 @@ resource "aws_vpc_endpoint" "databricksuigit " {
   ]
 
   tags = {
-    Name = "Databricksui endpoint"
+    Name = "Databricks endpoint"
   }
 }
 
-resource "aws_security_group" "databricksui_endpoint_sg" {
+resource "aws_security_group" "databricks_endpoint_sg" {
   name        = "databricksui-endpoint-${terraform.workspace}"
-  description = "Security Group for VPC Endpoint to Databricksui"
+  description = "Security Group for VPC Endpoint to Databrick"
   vpc_id      = aws_vpc.default.id
 
   ingress {
