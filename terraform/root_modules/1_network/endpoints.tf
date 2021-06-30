@@ -39,22 +39,32 @@ resource "aws_security_group" "airflow_endpoint_sg" {
 }
 
 resource "aws_vpc_endpoint" "databricksui" {
-  vpc_id            = aws_vpc.default.id
-  service_name      = var.databricksui_endpoint_service_name
-  vpc_endpoint_type = "Interface"
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = var.databricksui_endpoint_service_name
+  security_group_ids = [aws_security_group.databricksui_endpoint_sg.id]
 
   subnet_ids = [
     aws_subnet.private_a.id,
     aws_subnet.private_b.id,
-    aws_subnet.private_c.id
-  ]
-
-  security_group_ids = [
-    aws_security_group.databricksui_endpoint_sg.id
+    aws_subnet.private_c.id,
   ]
 
   tags = {
-    Name        = "DatabricksUI endpoint"
-    environment = var.environment
+    Name = "Databricksui endpoint"
+  }
+}
+
+resource "aws_security_group" "databricksui_endpoint_sg" {
+  name        = "databricksui-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to Databricksui"
+  vpc_id      = aws_vpc.default.id
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
   }
 }
