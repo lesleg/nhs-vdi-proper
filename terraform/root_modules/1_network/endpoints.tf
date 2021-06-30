@@ -38,7 +38,7 @@ resource "aws_security_group" "airflow_endpoint_sg" {
   }
 }
 
-resource "aws_vpc_endpoint" "databricksui" {
+resource "aws_vpc_endpoint" "databricksuigit " {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
   service_name       = var.databricksui_endpoint_service_name
