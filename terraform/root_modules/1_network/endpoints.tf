@@ -44,10 +44,9 @@ resource "aws_vpc_endpoint" "databricks" {
   service_name       = var.databricks_endpoint_service_name
   security_group_ids = [aws_security_group.databricks_endpoint_sg.id]
 
+  # NOTE: Databricks endpoint service does not support AZs b and c in eu-west-2
   subnet_ids = [
-    aws_subnet.private_a.id,
-    aws_subnet.private_b.id,
-    aws_subnet.private_c.id,
+    aws_subnet.private_a.id
   ]
 
   tags = {
