@@ -56,7 +56,7 @@ resource "aws_vpc_endpoint" "databricks" {
 }
 
 resource "aws_security_group" "databricks_endpoint_sg" {
-  name        = "databricksui-endpoint-${terraform.workspace}"
+  name        = "databricks-endpoint-${terraform.workspace}"
   description = "Security Group for VPC Endpoint to Databrick"
   vpc_id      = aws_vpc.default.id
 
