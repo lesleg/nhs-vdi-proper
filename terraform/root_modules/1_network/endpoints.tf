@@ -37,3 +37,33 @@ resource "aws_security_group" "airflow_endpoint_sg" {
     cidr_blocks = [aws_vpc.default.cidr_block]
   }
 }
+
+resource "aws_vpc_endpoint" "databricks" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = var.databricks_endpoint_service_name
+  security_group_ids = [aws_security_group.databricks_endpoint_sg.id]
+
+  # NOTE: Databricks endpoint service does not support AZs b and c in eu-west-2
+  subnet_ids = [
+    aws_subnet.private_a.id
+  ]
+
+  tags = {
+    Name = "Databricks endpoint"
+  }
+}
+
+resource "aws_security_group" "databricks_endpoint_sg" {
+  name        = "databricks-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to Databricks"
+  vpc_id      = aws_vpc.default.id
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
