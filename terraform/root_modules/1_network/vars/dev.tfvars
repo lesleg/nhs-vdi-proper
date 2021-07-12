@@ -1,4 +1,5 @@
 environment      = "dev"
+region           = "eu-west-2"
 s3_bucket_prefix = "nhsd-data-refinery-access-dev"
 
 identity_account_id = 973361696543
