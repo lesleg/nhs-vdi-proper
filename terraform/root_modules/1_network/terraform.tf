@@ -1,15 +1,22 @@
 terraform {
+  required_version = "= 1.0.0"
+
   backend "s3" {
     key     = "vdi-network.tfstate"
     region  = "eu-west-2"
     encrypt = true
   }
 
-  required_version = "= 1.0.0"
+  required_providers {
+    databricks = {
+      source  = "databrickslabs/databricks"
+      version = "0.3.5"
+    }
+  }
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region = var.region
   default_tags {
     tags = {
       project     = local.project
@@ -19,4 +26,10 @@ provider "aws" {
       root_module = "1_network"
     }
   }
+}
+
+provider "databricks" {
+  host     = "https://accounts.cloud.databricks.com"
+  username = data.aws_secretsmanager_secret_version.current_databricks_account_username.secret_string
+  password = data.aws_secretsmanager_secret_version.current_databricks_account_password.secret_string
 }

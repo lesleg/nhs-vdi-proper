@@ -1,4 +1,5 @@
 variable "environment" {}
+variable "region" {}
 
 variable "s3_bucket_prefix" {}
 variable "identity_account_id" {}

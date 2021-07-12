@@ -60,10 +60,18 @@ resource "aws_security_group" "databricks_endpoint_sg" {
   vpc_id      = aws_vpc.default.id
 
   ingress {
-    description = "HTTP from VPC"
-    from_port   = 80
-    to_port     = 80
+    description = "HTTPS from VPC"
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.default.cidr_block]
   }
+}
+
+resource "databricks_mws_vpc_endpoint" "databricks" {
+  provider            = databricks
+  account_id          = data.aws_secretsmanager_secret_version.current_databricks_account_id.secret_string
+  aws_vpc_endpoint_id = aws_vpc_endpoint.databricks.id
+  vpc_endpoint_name   = "Databricks APIs ${var.environment} ${aws_vpc.default.id}"
+  region              = var.region
 }
