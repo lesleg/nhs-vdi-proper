@@ -11,9 +11,14 @@ stages:
 
 lint-terraform:
   stage: lint
+  only:
+    - master
+    - merge_requests
   script:
     - make fmt-check
-    - make terraform-validate
+    - MODULE=0_account_init make terraform-validate
+    - MODULE=1_network make terraform-validate
+    - MODULE=2_directory make terraform-validate
 
 deploy-1-network:
   stage: deploy
