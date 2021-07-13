@@ -21,7 +21,7 @@ tf-fmt-check: ## Check terraform file format (For use in CI, locally just use tf
 # Terraform
 
 tf_chdir_arg=-chdir=terraform/root_modules/${MODULE}
-tf_var_file_arg=-var-file=../../vars/${BUILD_ENV}.tfvars
+tf_var_file_arg=-var-file=vars/${BUILD_ENV}.tfvars
 
 .PHONY: tf-init
 tf-init: guard-MODULE guard-BUILD_ENV ## Initialises the root module directory
