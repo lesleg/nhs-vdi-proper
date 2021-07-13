@@ -15,10 +15,10 @@ lint-terraform:
     - master
     - merge_requests
   script:
-    - make fmt-check
-    - MODULE=0_account_init make terraform-validate
-    - MODULE=1_network make terraform-validate
-    - MODULE=2_directory make terraform-validate
+    - make tf-fmt-check
+    - BUILD_ENV=dev MODULE=0_account_init make tf-validate
+    - BUILD_ENV=dev MODULE=1_network make tf-validate
+    - BUILD_ENV=dev MODULE=2_directory make tf-validate
 
 deploy-terraform:
   stage: deploy
@@ -28,8 +28,8 @@ deploy-terraform:
     - if: '$CI_COMMIT_REF_NAME == "master"'
   script:
     - echo "Deploying the 1_network layer"
-    - MODULE=1_network make plan
-    - MODULE=1_network make deploy
+    - BUILD_ENV=dev MODULE=1_network make tf-plan
+    - BUILD_ENV=dev MODULE=1_network make tf-apply EXTRA_ARGS="-auto-approve=true"
     - echo "Deploying the 2_directory layer"
-    - MODULE=2_directory make plan
-    - MODULE=2_directory make deploy
+    - BUILD_ENV=dev MODULE=2_directory make tf-plan
+    - BUILD_ENV=dev MODULE=2_directory make tf-apply EXTRA_ARGS="-auto-approve=true"

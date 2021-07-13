@@ -1,89 +1,51 @@
-MODULE?=1_network
+.PHONY: help
+help: ## Print info about each available command in this Makefile
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(firstword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-# Terraform
-DIR:=terraform/root_modules/${MODULE}
+guard-%:
+	@ if [ "${${*}}" = "" ]; then \
+		echo "Environment variable $* not set"; \
+		exit 1; \
+	fi
 
-# Forces Terraform to place state data within the root module
-export TF_DATA_DIR:=${DIR}/.terraform
+# Linting
 
-# Set env to 'dev' by default
-BUILD_ENV?=dev
-
-TERRAFORM_STATE_BUCKET=nhsd-data-refinery-access-${BUILD_ENV}-terraform-state
-TERRAFORM_STATE_LOCK_TABLE=nhsd-data-refinery-access-${BUILD_ENV}-terraform-state-lock
-
-VAR_FILE = vars/${BUILD_ENV}.tfvars
-
-# Set the WORKSPACE to 'branch_name' by default
-WORKSPACE ?= $(shell git rev-parse --abbrev-ref HEAD)
-
-init: ## Saves the state file into the S3 bucket / DynamoDB table
-	terraform -chdir=${DIR} init \
-	-backend-config="bucket=${TERRAFORM_STATE_BUCKET}" \
-	-backend-config="dynamodb_table=${TERRAFORM_STATE_LOCK_TABLE}" \
-	-reconfigure
-
-plan: init ## Create plan for terraform changes
-	terraform -chdir=${DIR} plan -var-file=${VAR_FILE}
-
-plan-destroy: init ## Create plan for terraform destroy changes
-	terraform -chdir=${DIR} plan -destroy -var-file=${VAR_FILE}
-
-force-unlock: init ## Create plan for terraform changes
-	terraform -chdir=${DIR} force-unlock ${ID}
-
-destroy: init ## Destroy terraform resources defined within a given root module
-	terraform -chdir=${DIR} destroy -var-file=${VAR_FILE} -auto-approve=true
-
-fmt: ## Format terraform files
+.PHONY: tf-fmt
+tf-fmt: ## Format terraform files
 	terraform fmt --recursive
 
-fmt-check: ## Check terraform file format
-	terraform fmt -recursive -check
+.PHONY: tf-fmt-check
+tf-fmt-check: ## Check terraform file format (For use in CI, locally just use tf-fmt)
+	terraform fmt -recursive -check -diff
 
-terraform-validate: init ## Validate terraform root module
-	terraform -chdir=${DIR} validate
+# Terraform
 
-deploy: init ## Apply Terraform changes
-	terraform -chdir=${DIR} apply -var-file=${VAR_FILE} -auto-approve=true
+tf_chdir_arg=-chdir=terraform/root_modules/${MODULE}
+tf_var_file_arg=-var-file=../../vars/${BUILD_ENV}.tfvars
 
-# Packer commands
+.PHONY: tf-init
+tf-init: guard-MODULE guard-BUILD_ENV ## Initialises the root module directory
+	terraform ${tf_chdir_arg} init \
+		-backend-config="bucket=nhsd-data-refinery-access-${BUILD_ENV}-terraform-state" \
+		-backend-config="dynamodb_table=nhsd-data-refinery-access-${BUILD_ENV}-terraform-state-lock" \
+		-reconfigure
 
-packer-build:
-	@$(MAKE) -C packer/amazon-linux-base build
+.PHONY: tf-validate
+tf-validate: guard-MODULE tf-init ## Validate terraform root module
+	terraform ${tf_chdir_arg} validate
 
-packer-validate:
-	@$(MAKE) -C packer/amazon-linux-base validate
+.PHONY: tf-plan
+tf-plan: guard-MODULE guard-BUILD_ENV tf-init ## Create plan for terraform changes
+	terraform ${tf_chdir_arg} plan ${tf_var_file_arg}
 
-# Terraform Workspace commands
-workspace-new: init
-	terraform -chdir=${DIR} workspace new ${WORKSPACE}
+.PHONY: tf-apply
+tf-apply: guard-MODULE guard-BUILD_ENV tf-init ## Apply Terraform changes (in CI set EXTRA_ARGS to -auto-approve=true)
+	terraform ${tf_chdir_arg} apply ${tf_var_file_arg} ${EXTRA_ARGS}
 
-workspace-list: init
-	terraform -chdir=${DIR} workspace list
+.PHONY: tf-plan-destroy
+tf-plan-destroy: guard-MODULE guard-BUILD_ENV tf-init ## Create plan for terraform destroy changes
+	terraform ${tf_chdir_arg} plan -destroy ${tf_var_file_arg}
 
-workspace-select: init
-	terraform -chdir=${DIR} workspace select ${WORKSPACE}
-
-workspace-delete: init
-	terraform -chdir=${DIR} workspace delete ${WORKSPACE}
-
-workspace-show: init
-	terraform -chdir=${DIR} workspace show
-
-# Release
-
-release-get-version:
-	@$(MAKE) -s -C scripts/release get-version
-
-release-get-tag:
-	@$(MAKE) -s -C scripts/release get-tag
-
-release-tag-patch-version:
-	@$(MAKE) -C scripts/release tag-patch
-
-release-tag-minor-version:
-	@$(MAKE) -C scripts/release tag-minor
-
-release-tag-major-version:
-	@$(MAKE) -C scripts/release tag-major
+.PHONY: tf-destroy
+tf-destroy: guard-MODULE guard-BUILD_ENV tf-init ## Destroy terraform resources defined within a given root module (in CI set EXTRA_ARGS to -auto-approve=true)
+	terraform ${tf_chdir_arg} destroy ${tf_var_file_arg} ${EXTRA_ARGS}
