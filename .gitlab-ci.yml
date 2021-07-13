@@ -20,20 +20,16 @@ lint-terraform:
     - MODULE=1_network make terraform-validate
     - MODULE=2_directory make terraform-validate
 
-deploy-1-network:
+deploy-terraform:
   stage: deploy
-  only:
-    - master
+  rules:
+    - if: '$CI_OPEN_MERGE_REQUESTS && $TEST_MR_DEPLOYMENT_ON_DEV == "true"'
+      when: manual
+    - if: '$CI_COMMIT_REF_NAME == "master"'
   script:
     - echo "Deploying the 1_network layer"
     - MODULE=1_network make plan
     - MODULE=1_network make deploy
-
-deploy-2-directory:
-  stage: deploy
-  only:
-    - master
-  script:
     - echo "Deploying the 2_directory layer"
     - MODULE=2_directory make plan
     - MODULE=2_directory make deploy
