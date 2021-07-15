@@ -1,3 +1,7 @@
+WORKSPACE_BUNDLE_ID = $(shell aws workspaces describe-workspace-bundles | jq '.Bundles[] | select(.Name=="NHS-Workspace") | .BundleId')
+WORKSPACE_DIRECTORY_ID = $(shell aws ds describe-directories | jq '.DirectoryDescriptions[] | select(.ShortName=="dare") | .DirectoryId')
+WORKSPACE_REGISTRATION_CODE = $(shell aws workspaces describe-workspace-directories | jq '.Directories[] | select(.DirectoryId==${WORKSPACE_DIRECTORY_ID}) | .RegistrationCode')
+
 .PHONY: help
 help: ## Print info about each available command in this Makefile
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(firstword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -49,3 +53,18 @@ tf-plan-destroy: guard-MODULE guard-BUILD_ENV tf-init ## Create plan for terrafo
 .PHONY: tf-destroy
 tf-destroy: guard-MODULE guard-BUILD_ENV tf-init ## Destroy terraform resources defined within a given root module (in CI set EXTRA_ARGS to -auto-approve=true)
 	terraform ${tf_chdir_arg} destroy ${tf_var_file_arg} ${EXTRA_ARGS}
+
+# Onboarding
+
+.PHONY: aws-create-workspace
+aws-create-workspace: guard-username ## Create a workspace for a given user
+	aws workspaces create-workspaces --workspaces DirectoryId=${WORKSPACE_DIRECTORY_ID},UserName=${username},BundleId=${WORKSPACE_BUNDLE_ID},WorkspaceProperties='{RunningMode=AUTO_STOP,RunningModeAutoStopTimeoutInMinutes=60,RootVolumeSizeGib=80,UserVolumeSizeGib=50,ComputeTypeName=PERFORMANCE}' | jq
+
+.PHONY: aws-check-workspace-state
+aws-check-workspace-state: guard-username ## Check the workspace state, and output the registration code if it is ready
+	@if [ "`aws workspaces describe-workspaces | jq '.Workspaces[] | select(.UserName=="${username}") | .State')`" = "\"PENDING\"" ]; \
+		then echo "Workspace is still being created"; \
+	else \
+		echo "Workspace creation complete"; \
+		echo "Registration Code is ${WORKSPACE_REGISTRATION_CODE}"; \
+	fi
