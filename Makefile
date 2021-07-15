@@ -62,7 +62,7 @@ aws-create-workspace: guard-username ## Create a workspace for a given user
 
 .PHONY: aws-check-workspace-state
 aws-check-workspace-state: guard-username ## Check the workspace state, and output the registration code if it is ready
-	@if [ "`aws workspaces describe-workspaces | jq '.Workspaces[] | select(.UserName=="${username}") | .State')`" = "\"PENDING\"" ]; \
+	@if [ "`aws workspaces describe-workspaces | jq '.Workspaces[] | select(.UserName=="${username}") | .State'`" = "\"PENDING\"" ]; \
 		then echo "Workspace is still being created"; \
 	else \
 		echo "Workspace creation complete"; \
