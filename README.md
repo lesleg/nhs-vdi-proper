@@ -14,3 +14,11 @@ If you wish to use dev for testing changes on your branch, you can opt to deploy
 1. Select your branch from the dropdown
 1. In the variables section, enter `TEST_MR_DEPLOYMENT_ON_DEV` as the key and `true` as the value
 1. This will start your pipeline, but you will need to manually trigger the job for each terraform layer using the start buttons
+
+## Onboarding
+
+After a user has been created in AD, the workspace can be created using the makefile targets
+
+- `AWS_PROFILE=$ACCESS_DEV_PROFILE_NAME username=$USERNAME aws-create-workspace` will create a workspace for the user
+
+- `AWS_PROFILE=$ACCESS_DEV_PROFILE_NAME username=$USERNAME aws-check-workspace-state` will check to see if the workspace has been created and if so, output the registration code
