@@ -37,3 +37,11 @@ data "aws_vpc_peering_connection" "ad_to_vdi" {
     ]
   }
 }
+
+resource "aws_internet_gateway" "vdi_igw" {
+  vpc_id = aws_vpc.default.id
+
+  tags = {
+    Name = "vdi-igw-${terraform.workspace}"
+  }
+}
