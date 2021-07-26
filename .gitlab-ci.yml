@@ -1,6 +1,7 @@
 default:
   before_script:
     - source ~/.bashrc
+    - cat .tool-versions | xargs -L 1 asdf install
 
 variables:
   AWS_PROFILE: access_dev
