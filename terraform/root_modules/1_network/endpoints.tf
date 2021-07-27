@@ -3,7 +3,7 @@ resource "aws_vpc_endpoint" "s3" {
   service_name = "com.amazonaws.eu-west-2.s3"
 
   tags = {
-    Name = "S3 endpoint"
+    Name = "s3-gateway-endpoint"
   }
 }
 
@@ -20,7 +20,7 @@ resource "aws_vpc_endpoint" "airflow" {
   ]
 
   tags = {
-    Name = "Airflow endpoint"
+    Name = "airflow-interface-endpoint"
   }
 }
 
@@ -28,6 +28,10 @@ resource "aws_security_group" "airflow_endpoint_sg" {
   name        = "airflow-endpoint-${terraform.workspace}"
   description = "Security Group for VPC Endpoint to Airflow"
   vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "airflow-endpoint-${terraform.workspace}"
+  }
 
   ingress {
     description = "HTTP from VPC"
@@ -44,13 +48,52 @@ resource "aws_vpc_endpoint" "databricks" {
   service_name       = var.databricks_endpoint_service_name
   security_group_ids = [aws_security_group.databricks_endpoint_sg.id]
 
+  tags = {
+    Name = "databricks-interface-endpoint"
+  }
+
   # NOTE: Databricks endpoint service does not support AZs b and c in eu-west-2
   subnet_ids = [
     aws_subnet.private_a.id
   ]
+  lifecycle {
+    ignore_changes = [
+      private_dns_enabled
+    ]
+  }
+}
 
-  tags = {
-    Name = "Databricks endpoint"
+/*
+ Can't enable private DNS on the endpoint until it has been registered with Databricks.
+ (See the databricks_mws_vpc_endpoint resource in this file)
+ The following resource runs a script that waits until the endpoint state is 'available'
+ and then turns on the private DNS feature.
+*/
+resource "null_resource" "enable_databricks_private_dns" {
+  triggers = {
+    always_run = timestamp()
+  }
+  provisioner "local-exec" {
+    command = <<EOF
+    set -e
+    i=0
+    while [ $(aws --profile=access_$ENVIRONMENT ec2 describe-vpc-endpoints --vpc-endpoint-ids $VPC_ENDPOINT_ID | jq -r '.[] | first | .State') != 'available' ]; do
+      if [ $i -gt 60 ]; then
+        echo "Timed out waiting for $VPC_ENDPOINT_NAME endpoint to become available";
+        exit 1
+      fi
+      echo "Waiting for the $VPC_ENDPOINT_NAME endpoint to become available";
+      sleep 10;
+      ((i+=1))
+    done;
+    echo "$VPC_ENDPOINT_NAME is available!";
+    aws --profile=access_$ENVIRONMENT ec2 modify-vpc-endpoint --vpc-endpoint-id $VPC_ENDPOINT_ID --private-dns-enabled;
+EOF
+    environment = {
+      VPC_ENDPOINT_ID   = aws_vpc_endpoint.databricks.id
+      VPC_ENDPOINT_NAME = aws_vpc_endpoint.databricks.tags["Name"]
+      ENVIRONMENT       = var.environment
+    }
   }
 }
 
@@ -58,6 +101,10 @@ resource "aws_security_group" "databricks_endpoint_sg" {
   name        = "databricks-endpoint-${terraform.workspace}"
   description = "Security Group for VPC Endpoint to Databricks"
   vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "databricks-endpoint-${terraform.workspace}"
+  }
 
   ingress {
     description = "HTTPS from VPC"
