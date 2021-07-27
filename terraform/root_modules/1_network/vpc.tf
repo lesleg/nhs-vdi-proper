@@ -47,7 +47,7 @@ resource "aws_internet_gateway" "vdi_igw" {
 }
 
 resource "aws_flow_log" "vdi_vpc_flow_log" {
-  log_destination = "${aws_cloudwatch_log_group.vpc_flow_logs.arn}:*"
+  log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
   iam_role_arn    = aws_iam_role.vpc_flow_logs.arn
   vpc_id          = aws_vpc.default.id
   traffic_type    = "ALL"
