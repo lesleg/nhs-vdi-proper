@@ -56,6 +56,8 @@ resource "aws_vpc_endpoint" "databricks" {
   subnet_ids = [
     aws_subnet.private_a.id
   ]
+
+  # Ignore private DNS flag as this is enabled after creation by the null_resource script below
   lifecycle {
     ignore_changes = [
       private_dns_enabled
