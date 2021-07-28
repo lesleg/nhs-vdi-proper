@@ -31,10 +31,8 @@ deploy-dev:
     - if: '$CI_COMMIT_REF_NAME == "master"'
   script:
     - echo "Deploying the 1_network layer"
-    - BUILD_ENV=dev MODULE=1_network make tf-plan
     - BUILD_ENV=dev MODULE=1_network make tf-apply EXTRA_ARGS="-auto-approve=true"
     - echo "Deploying the 2_directory layer"
-    - BUILD_ENV=dev MODULE=2_directory make tf-plan
     - BUILD_ENV=dev MODULE=2_directory make tf-apply EXTRA_ARGS="-auto-approve=true"
 
 deploy-int:
@@ -45,8 +43,6 @@ deploy-int:
     - int
   script:
     - echo "Deploying the 1_network layer"
-    - BUILD_ENV=int MODULE=1_network make tf-plan
     - BUILD_ENV=int MODULE=1_network make tf-apply EXTRA_ARGS="-auto-approve=true"
     - echo "Deploying the 2_directory layer"
-    - BUILD_ENV=int MODULE=2_directory make tf-plan
     - BUILD_ENV=int MODULE=2_directory make tf-apply EXTRA_ARGS="-auto-approve=true"

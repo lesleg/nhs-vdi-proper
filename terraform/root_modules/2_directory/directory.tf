@@ -1,14 +1,11 @@
 resource "aws_directory_service_directory" "connector" {
   name     = "dare.${var.environment}.local"
-  password = "Pa55word123" #TODO: Update this once Admin password is in Secrets Manager
+  password = local.ad_admin_password
   size     = "Small"
   type     = "ADConnector"
 
   connect_settings {
-    customer_dns_ips = [
-      "10.1.1.197",
-      "10.1.2.237"
-    ]
+    customer_dns_ips  = var.ad_domain_controller_ips
     customer_username = "Admin"
     vpc_id            = data.terraform_remote_state.network.outputs.vpc_id
     subnet_ids = [
@@ -23,8 +20,17 @@ resource "aws_directory_service_directory" "connector" {
   ]
 }
 
+resource "aws_secretsmanager_secret" "ad_admin_password" {
+  name = "secret/active_directory/ad_admin_password"
+}
+
+data "aws_secretsmanager_secret_version" "ad_admin_password" {
+  secret_id = aws_secretsmanager_secret.ad_admin_password.id
+}
+
 resource "aws_workspaces_directory" "example" {
   directory_id = aws_directory_service_directory.connector.id
+
   subnet_ids = [
     data.terraform_remote_state.network.outputs.private_subnet_id_a,
     data.terraform_remote_state.network.outputs.private_subnet_id_b

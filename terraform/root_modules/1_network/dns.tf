@@ -5,6 +5,13 @@ resource "aws_route53_zone" "private" {
   vpc {
     vpc_id = aws_vpc.default.id
   }
+
+  # Ignore VPC associations to prevent detachment of AD VPC from this hosted zone
+  lifecycle {
+    ignore_changes = [
+      vpc
+    ]
+  }
 }
 
 resource "aws_route53_vpc_association_authorization" "ad_vpc_authorization" {
