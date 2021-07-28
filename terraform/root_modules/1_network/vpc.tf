@@ -36,6 +36,10 @@ data "aws_vpc_peering_connection" "ad_to_vdi" {
       "active"
     ]
   }
+
+  depends_on = [
+    aws_vpc.default
+  ]
 }
 
 resource "aws_internet_gateway" "vdi_igw" {
