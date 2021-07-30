@@ -42,6 +42,41 @@ resource "aws_security_group" "airflow_endpoint_sg" {
   }
 }
 
+resource "aws_vpc_endpoint" "gitlab" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = var.gitlab_endpoint_service_name
+  security_group_ids = [aws_security_group.gitlab_endpoint_sg.id]
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "gitlab-interface-endpoint"
+  }
+}
+
+resource "aws_security_group" "gitlab_endpoint_sg" {
+  name        = "gitlab-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to Gitlab"
+  vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "gitlab-endpoint-${terraform.workspace}"
+  }
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
+
 resource "aws_vpc_endpoint" "databricks" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
