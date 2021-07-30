@@ -31,6 +31,18 @@ resource "aws_route53_record" "airflow" {
   }
 }
 
+resource "aws_route53_record" "gitlab" {
+  zone_id = aws_route53_zone.private.id
+  name    = "gitlab"
+  type    = "A"
+
+  alias {
+    name                   = aws_vpc_endpoint.gitlab.dns_entry[0].dns_name
+    zone_id                = aws_vpc_endpoint.gitlab.dns_entry[0].hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_route53_resolver_endpoint" "inbound_resolver" {
   name      = "inbound-resolver"
   direction = "INBOUND"
