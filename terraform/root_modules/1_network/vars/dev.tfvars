@@ -10,4 +10,4 @@ airflow_endpoint_service_name    = "com.amazonaws.vpce.eu-west-2.vpce-svc-06eb77
 gitlab_endpoint_service_name     = "com.amazonaws.vpce.eu-west-2.vpce-svc-004ca9c579e1bc791"
 databricks_endpoint_service_name = "com.amazonaws.vpce.eu-west-2.vpce-svc-01148c7cdc1d1326c"
 
-outbound_internet_access_enabled = true
+outbound_internet_access_enabled = false
