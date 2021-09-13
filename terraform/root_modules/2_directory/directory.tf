@@ -36,7 +36,12 @@ resource "aws_workspaces_directory" "example" {
     data.terraform_remote_state.network.outputs.private_subnet_id_b
   ]
 
+  workspace_creation_properties {
+    default_ou = "OU=Workspaces,OU=dare,DC=dare,DC=${var.environment},DC=local"
+  }
+
   workspace_access_properties {
+    device_type_linux      = "ALLOW"
     device_type_android    = "DENY"
     device_type_chromeos   = "DENY"
     device_type_ios        = "DENY"

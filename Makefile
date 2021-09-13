@@ -1,4 +1,4 @@
-WORKSPACE_BUNDLE_ID = $(shell aws workspaces describe-workspace-bundles | jq '.Bundles[] | select(.Name=="NHS-Workspace") | .BundleId')
+WORKSPACE_BUNDLE_ID = $(shell aws workspaces describe-workspace-bundles | jq '.Bundles[] | select(.Name=="DARE_VDI_Bundle_v0.4") | .BundleId')
 WORKSPACE_DIRECTORY_ID = $(shell aws ds describe-directories | jq '.DirectoryDescriptions[] | select(.ShortName=="dare") | .DirectoryId')
 WORKSPACE_REGISTRATION_CODE = $(shell aws workspaces describe-workspace-directories | jq '.Directories[] | select(.DirectoryId==${WORKSPACE_DIRECTORY_ID}) | .RegistrationCode')
 
@@ -58,7 +58,7 @@ tf-destroy: guard-MODULE guard-BUILD_ENV tf-init ## Destroy terraform resources 
 
 .PHONY: aws-create-workspace
 aws-create-workspace: guard-username ## Create a workspace for a given user
-	aws workspaces create-workspaces --workspaces DirectoryId=${WORKSPACE_DIRECTORY_ID},UserName=${username},BundleId=${WORKSPACE_BUNDLE_ID},WorkspaceProperties='{RunningMode=AUTO_STOP,RunningModeAutoStopTimeoutInMinutes=60,RootVolumeSizeGib=80,UserVolumeSizeGib=50,ComputeTypeName=PERFORMANCE}' | jq
+	aws workspaces create-workspaces --workspaces DirectoryId=${WORKSPACE_DIRECTORY_ID},UserName=${username},BundleId=${WORKSPACE_BUNDLE_ID},WorkspaceProperties='{RunningMode=AUTO_STOP,RunningModeAutoStopTimeoutInMinutes=60,RootVolumeSizeGib=80,UserVolumeSizeGib=50,ComputeTypeName=POWER}' | jq
 
 .PHONY: aws-check-workspace-state
 aws-check-workspace-state: guard-username ## Check the workspace state, and output the registration code if it is ready
