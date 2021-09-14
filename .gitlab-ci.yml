@@ -6,6 +6,7 @@ default:
 stages:
   - lint
   - deploy-dev
+  - deploy-test
   - deploy-int
 
 lint-terraform:
@@ -23,6 +24,7 @@ lint-terraform:
 
 deploy-dev:
   stage: deploy-dev
+  environment: dev
   variables:
     AWS_PROFILE: access_dev
   rules:
@@ -35,8 +37,22 @@ deploy-dev:
     - echo "Deploying the 2_directory layer"
     - BUILD_ENV=dev MODULE=2_directory make tf-apply EXTRA_ARGS="-auto-approve=true"
 
+deploy-test:
+  stage: deploy-test
+  environment: test
+  variables:
+    AWS_PROFILE: access_test
+  only:
+    - test
+  script:
+    - echo "Deploying the 1_network layer"
+    - BUILD_ENV=ref MODULE=1_network make tf-apply EXTRA_ARGS="-auto-approve=true"
+    - echo "Deploying the 2_directory layer"
+    - BUILD_ENV=ref MODULE=2_directory make tf-apply EXTRA_ARGS="-auto-approve=true"
+
 deploy-int:
   stage: deploy-int
+  environment: int
   variables:
     AWS_PROFILE: access_int
   only:
