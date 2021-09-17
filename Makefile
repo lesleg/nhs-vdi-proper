@@ -58,7 +58,7 @@ tf-destroy: guard-MODULE guard-BUILD_ENV tf-init ## Destroy terraform resources 
 
 .PHONY: aws-create-workspace
 aws-create-workspace: guard-username ## Create a workspace for a given user
-	aws workspaces create-workspaces --workspaces DirectoryId=${WORKSPACE_DIRECTORY_ID},UserName=${username},BundleId=${WORKSPACE_BUNDLE_ID},WorkspaceProperties='{RunningMode=AUTO_STOP,RunningModeAutoStopTimeoutInMinutes=60,RootVolumeSizeGib=80,UserVolumeSizeGib=50,ComputeTypeName=POWER}' | jq
+	aws workspaces create-workspaces --workspaces DirectoryId=${WORKSPACE_DIRECTORY_ID},UserName=${username},BundleId=${WORKSPACE_BUNDLE_ID},UserVolumeEncryptionEnabled=true,RootVolumeEncryptionEnabled=true,VolumeEncryptionKey=alias/workspace_encryption,WorkspaceProperties='{RunningMode=AUTO_STOP,RunningModeAutoStopTimeoutInMinutes=60,RootVolumeSizeGib=80,UserVolumeSizeGib=50,ComputeTypeName=POWER}' | jq
 
 .PHONY: aws-check-workspace-state
 aws-check-workspace-state: guard-username ## Check the workspace state, and output the registration code if it is ready
