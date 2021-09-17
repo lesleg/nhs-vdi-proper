@@ -51,3 +51,12 @@ resource "aws_workspaces_directory" "example" {
     device_type_zeroclient = "DENY"
   }
 }
+
+resource "aws_kms_key" "workspace_encryption" {
+  description = "Encryption key for workspace volumes"
+}
+
+resource "aws_kms_alias" "workspace_encryption" {
+  name          = "alias/workspace_encryption"
+  target_key_id = aws_kms_key.workspace_encryption.id
+}
