@@ -13,3 +13,4 @@
 *.pem
 *.srl
 *id_rsa*
+/.venv/

@@ -25,8 +25,20 @@ resource "aws_route53_record" "airflow" {
   type    = "A"
 
   alias {
-    name                   = aws_vpc_endpoint.airflow.dns_entry[0].dns_name
-    zone_id                = aws_vpc_endpoint.airflow.dns_entry[0].hosted_zone_id
+    name                   = aws_vpc_endpoint.airflow_ui.dns_entry[0].dns_name
+    zone_id                = aws_vpc_endpoint.airflow_ui.dns_entry[0].hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "rest_service" {
+  zone_id = aws_route53_zone.private.id
+  name    = "rest-service"
+  type    = "A"
+
+  alias {
+    name                   = aws_vpc_endpoint.airflow_rest_service.dns_entry[0].dns_name
+    zone_id                = aws_vpc_endpoint.airflow_rest_service.dns_entry[0].hosted_zone_id
     evaluate_target_health = true
   }
 }

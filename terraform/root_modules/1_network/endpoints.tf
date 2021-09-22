@@ -1,3 +1,13 @@
+# AWS Resources with Gateway endpoints
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id       = aws_vpc.default.id
+  service_name = "com.amazonaws.eu-west-2.dynamodb"
+
+  tags = {
+    Name = "dynamodb-gateway-endpoint"
+  }
+}
+
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = aws_vpc.default.id
   service_name = "com.amazonaws.eu-west-2.s3"
@@ -7,11 +17,131 @@ resource "aws_vpc_endpoint" "s3" {
   }
 }
 
-resource "aws_vpc_endpoint" "airflow" {
+# AWS Resources with Interface endpoints
+resource "aws_vpc_endpoint" "rds" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
-  service_name       = var.airflow_endpoint_service_name
-  security_group_ids = [aws_security_group.airflow_endpoint_sg.id]
+  service_name       = "com.amazonaws.eu-west-2.rds"
+  security_group_ids = [aws_security_group.rds_endpoint_sg.id]
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "rds-interface-endpoint"
+  }
+}
+
+resource "aws_security_group" "rds_endpoint_sg" {
+  name        = "rds-interface-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to RDS"
+  vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "rds-endpoint-${terraform.workspace}"
+  }
+
+  ingress {
+    description = "HTTPS from VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
+
+resource "aws_vpc_endpoint" "sqs" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = "com.amazonaws.eu-west-2.sqs"
+  security_group_ids = [aws_security_group.sqs_endpoint_sg.id]
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "sqs-interface-endpoint"
+  }
+}
+
+resource "aws_security_group" "sqs_endpoint_sg" {
+  name        = "sqs-interface-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to SQS"
+  vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "sqs-endpoint-${terraform.workspace}"
+  }
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+  ingress {
+    description = "HTTPS from VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
+
+resource "aws_vpc_endpoint" "sts" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = "com.amazonaws.eu-west-2.sts"
+  security_group_ids = [aws_security_group.sts_endpoint_sg.id]
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "sts-interface-endpoint"
+  }
+}
+
+resource "aws_security_group" "sts_endpoint_sg" {
+  name        = "sts-interface-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to STS"
+  vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "sts-endpoint-${terraform.workspace}"
+  }
+
+  ingress {
+    description = "HTTPS from VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
+
+# Application-specific Interface endpoints
+resource "aws_vpc_endpoint" "airflow_rest_service" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = var.airflow_rest_service_endpoint_service_name
+  security_group_ids = [aws_security_group.airflow_rest_service_endpoint_sg.id]
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -20,17 +150,52 @@ resource "aws_vpc_endpoint" "airflow" {
   ]
 
   tags = {
-    Name = "airflow-interface-endpoint"
+    Name = "airflow-rest-service-interface-endpoint"
   }
 }
 
-resource "aws_security_group" "airflow_endpoint_sg" {
-  name        = "airflow-endpoint-${terraform.workspace}"
-  description = "Security Group for VPC Endpoint to Airflow"
+resource "aws_security_group" "airflow_rest_service_endpoint_sg" {
+  name        = "airflow-rest-service-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to Airflow Rest-Service"
   vpc_id      = aws_vpc.default.id
 
   tags = {
-    Name = "airflow-endpoint-${terraform.workspace}"
+    Name = "airflow-rest-service-endpoint-${terraform.workspace}"
+  }
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
+
+resource "aws_vpc_endpoint" "airflow_ui" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = var.airflow_ui_endpoint_service_name
+  security_group_ids = [aws_security_group.airflow_ui_endpoint_sg.id]
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "airflow-ui-interface-endpoint"
+  }
+}
+
+resource "aws_security_group" "airflow_ui_endpoint_sg" {
+  name        = "airflow-ui-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to Airflow UI"
+  vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "airflow-ui-endpoint-${terraform.workspace}"
   }
 
   ingress {
