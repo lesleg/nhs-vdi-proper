@@ -3,6 +3,12 @@ resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id       = aws_vpc.default.id
   service_name = "com.amazonaws.eu-west-2.dynamodb"
 
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
   tags = {
     Name = "dynamodb-gateway-endpoint"
   }
@@ -11,6 +17,12 @@ resource "aws_vpc_endpoint" "dynamodb" {
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = aws_vpc.default.id
   service_name = "com.amazonaws.eu-west-2.s3"
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
 
   tags = {
     Name = "s3-gateway-endpoint"
