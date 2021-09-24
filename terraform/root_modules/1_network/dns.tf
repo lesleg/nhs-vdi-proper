@@ -20,25 +20,29 @@ resource "aws_route53_vpc_association_authorization" "ad_vpc_authorization" {
 }
 
 resource "aws_route53_record" "airflow" {
+  count = var.environment == "test" ? 0 : 1
+
   zone_id = aws_route53_zone.private.id
   name    = "airflow"
   type    = "A"
 
   alias {
-    name                   = aws_vpc_endpoint.airflow_ui.dns_entry[0].dns_name
-    zone_id                = aws_vpc_endpoint.airflow_ui.dns_entry[0].hosted_zone_id
+    name                   = aws_vpc_endpoint.airflow_ui[0].dns_entry[0].dns_name
+    zone_id                = aws_vpc_endpoint.airflow_ui[0].dns_entry[0].hosted_zone_id
     evaluate_target_health = true
   }
 }
 
 resource "aws_route53_record" "rest_service" {
+  count = var.environment == "test" ? 0 : 1
+
   zone_id = aws_route53_zone.private.id
   name    = "rest-service"
   type    = "A"
 
   alias {
-    name                   = aws_vpc_endpoint.airflow_rest_service.dns_entry[0].dns_name
-    zone_id                = aws_vpc_endpoint.airflow_rest_service.dns_entry[0].hosted_zone_id
+    name                   = aws_vpc_endpoint.airflow_rest_service[0].dns_entry[0].dns_name
+    zone_id                = aws_vpc_endpoint.airflow_rest_service[0].dns_entry[0].hosted_zone_id
     evaluate_target_health = true
   }
 }

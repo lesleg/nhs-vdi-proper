@@ -150,6 +150,8 @@ resource "aws_security_group" "sts_endpoint_sg" {
 
 # Application-specific Interface endpoints
 resource "aws_vpc_endpoint" "airflow_rest_service" {
+  count = var.environment == "test" ? 0 : 1
+
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
   service_name       = var.airflow_rest_service_endpoint_service_name
@@ -185,6 +187,8 @@ resource "aws_security_group" "airflow_rest_service_endpoint_sg" {
 }
 
 resource "aws_vpc_endpoint" "airflow_ui" {
+  count = var.environment == "test" ? 0 : 1
+
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
   service_name       = var.airflow_ui_endpoint_service_name
