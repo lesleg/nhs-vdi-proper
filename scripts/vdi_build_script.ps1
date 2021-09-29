@@ -21,7 +21,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 Write-Host "Installing chocolatey applications"
 
-choco install -y googlechrome vscode pycharm git pycharm-community notepadplusplus awscli jq make python
+choco install -y googlechrome vscode pycharm git pycharm-community notepadplusplus awscli jq make
+choco install python --version=3.7.9
 
 Write-Host "Unpinning items from start menu"
 
