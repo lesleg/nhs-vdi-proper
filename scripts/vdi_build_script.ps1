@@ -43,6 +43,7 @@ Unpin-App-From-Start-Menu "File Explorer"
 Unpin-App-From-Start-Menu "Control Panel"
 Unpin-App-From-Start-Menu "Command Prompt"
 Unpin-App-From-Start-Menu "Task Manager"
+Unpin-App-From-Start-Menu "Windows Administrative Tools"
 
 Write-Host "Removing start menu shortcuts"
 
