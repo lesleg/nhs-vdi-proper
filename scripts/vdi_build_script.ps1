@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 # This should be run on an Amazon Workspace using a fresh `Power with Windows 10 (Server 2019 based) (PCoIP)` image
+# Ensure that there is no disk encryption so that we can make an image from it after
 # Create a new file with the same name on the workspace, and copy in these contents. Then open a powershell window as administator and run the script.
 # powershell -ExecutionPolicy Bypass -File D:\path\to\vdi_build_script.ps1
 
@@ -22,7 +23,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 Write-Host "Installing chocolatey applications"
 
 choco install -y googlechrome vscode pycharm git pycharm-community notepadplusplus awscli jq make
-choco install python --version=3.7.9
+choco install -y python --version=3.7.9
 
 Write-Host "Unpinning items from start menu"
 
