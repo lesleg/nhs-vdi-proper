@@ -1,6 +1,7 @@
 WORKSPACE_BUNDLE_ID = $(shell aws workspaces describe-workspace-bundles | jq '.Bundles[] | select(.Name=="DARE_VDI_Bundle_v0.4") | .BundleId')
 WORKSPACE_DIRECTORY_ID = $(shell aws ds describe-directories | jq '.DirectoryDescriptions[] | select(.ShortName=="dare") | .DirectoryId')
 WORKSPACE_REGISTRATION_CODE = $(shell aws workspaces describe-workspace-directories | jq '.Directories[] | select(.DirectoryId==${WORKSPACE_DIRECTORY_ID}) | .RegistrationCode')
+BUILD_REGION ?= "eu-west-2"
 
 .PHONY: help
 help: ## Print info about each available command in this Makefile
@@ -32,6 +33,7 @@ tf-init: guard-MODULE guard-BUILD_ENV ## Initialises the root module directory
 	terraform ${tf_chdir_arg} init \
 		-backend-config="bucket=nhsd-data-refinery-access-${BUILD_ENV}-terraform-state" \
 		-backend-config="dynamodb_table=nhsd-data-refinery-access-${BUILD_ENV}-terraform-state-lock" \
+		-backend-config="region=${BUILD_REGION}" \
 		-reconfigure
 
 .PHONY: tf-validate

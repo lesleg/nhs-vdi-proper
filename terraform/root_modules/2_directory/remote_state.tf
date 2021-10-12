@@ -3,7 +3,7 @@ data "terraform_remote_state" "network" {
   workspace = terraform.workspace
   config = {
     key    = "vdi-network.tfstate"
-    region = "eu-west-2"
-    bucket = "${data.aws_iam_account_alias.this.account_alias}-terraform-state"
+    region = var.region
+    bucket = "${var.s3_bucket_prefix}-terraform-state"
   }
 }
