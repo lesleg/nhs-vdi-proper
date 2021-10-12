@@ -62,7 +62,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
 }
 
 resource "aws_iam_role" "vpc_flow_logs" {
-  name = "VPCFlowLogs"
+  name = var.flow_logs_role_name
 
   assume_role_policy = <<EOF
 {

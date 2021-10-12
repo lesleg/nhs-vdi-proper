@@ -3,13 +3,12 @@ terraform {
 
   backend "s3" {
     key     = "account-init.tfstate"
-    region  = "eu-west-2"
     encrypt = true
   }
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region = var.region
   default_tags {
     tags = {
       project     = local.project

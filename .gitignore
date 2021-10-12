@@ -14,3 +14,6 @@
 *.srl
 *id_rsa*
 /.venv/
+
+# Mac
+.DS_Store

@@ -1,7 +1,7 @@
 # AWS Resources with Gateway endpoints
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id       = aws_vpc.default.id
-  service_name = "com.amazonaws.eu-west-2.dynamodb"
+  service_name = "com.amazonaws.${var.region}.dynamodb"
 
   route_table_ids = [
     aws_route_table.private_a.id,
@@ -16,7 +16,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
 
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = aws_vpc.default.id
-  service_name = "com.amazonaws.eu-west-2.s3"
+  service_name = "com.amazonaws.${var.region}.s3"
 
   route_table_ids = [
     aws_route_table.private_a.id,
@@ -33,7 +33,7 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_vpc_endpoint" "rds" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
-  service_name       = "com.amazonaws.eu-west-2.rds"
+  service_name       = "com.amazonaws.${var.region}.rds"
   security_group_ids = [aws_security_group.rds_endpoint_sg.id]
 
   subnet_ids = [
@@ -70,7 +70,7 @@ resource "aws_security_group" "rds_endpoint_sg" {
 resource "aws_vpc_endpoint" "sqs" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
-  service_name       = "com.amazonaws.eu-west-2.sqs"
+  service_name       = "com.amazonaws.${var.region}.sqs"
   security_group_ids = [aws_security_group.sqs_endpoint_sg.id]
 
   subnet_ids = [
@@ -114,7 +114,7 @@ resource "aws_security_group" "sqs_endpoint_sg" {
 resource "aws_vpc_endpoint" "sts" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
-  service_name       = "com.amazonaws.eu-west-2.sts"
+  service_name       = "com.amazonaws.${var.region}.sts"
   security_group_ids = [aws_security_group.sts_endpoint_sg.id]
 
   subnet_ids = [
@@ -218,6 +218,41 @@ resource "aws_security_group" "airflow_ui_endpoint_sg" {
     description = "HTTP from VPC"
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.default.cidr_block]
+  }
+}
+
+resource "aws_vpc_endpoint" "airflow_fake_mesh" {
+  vpc_id             = aws_vpc.default.id
+  vpc_endpoint_type  = "Interface"
+  service_name       = var.airflow_fake_mesh_endpoint_service_name
+  security_group_ids = [aws_security_group.airflow_fake_mesh_endpoint_sg.id]
+
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "airflow-fake-mesh-interface-endpoint"
+  }
+}
+
+resource "aws_security_group" "airflow_fake_mesh_endpoint_sg" {
+  name        = "airflow-fake-mesh-endpoint-${terraform.workspace}"
+  description = "Security Group for VPC Endpoint to Airflow Fake-Mesh"
+  vpc_id      = aws_vpc.default.id
+
+  tags = {
+    Name = "airflow-fake-mesh-endpoint-${terraform.workspace}"
+  }
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 8829
+    to_port     = 8829
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.default.cidr_block]
   }

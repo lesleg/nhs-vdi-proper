@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "workspaces" {
 }
 
 resource "aws_iam_role" "workspaces_default_role" {
-  name               = "workspaces_DefaultRole"
+  name               = var.workspace_role_name
   assume_role_policy = data.aws_iam_policy_document.workspaces.json
 }
 

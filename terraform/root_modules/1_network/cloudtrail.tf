@@ -71,7 +71,7 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail" {
 }
 
 resource "aws_iam_role" "cloudtrail_role" {
-  name                  = "VDICloudTrail"
+  name                  = var.cloudtrail_role_name
   path                  = "/"
   force_detach_policies = true
 
@@ -110,7 +110,7 @@ resource "aws_iam_role_policy_attachment" "cloudtrail_logging_policy_attachment"
 }
 
 resource "aws_iam_policy" "cloudtrail_logging_policy" {
-  name   = "VDICloudTrail"
+  name   = var.cloudtrail_policy_name
   policy = data.aws_iam_policy_document.cloudtrail_logging_policy.json
 }
 
