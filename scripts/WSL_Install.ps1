@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 # After running vdi_build_script.ps1, this file should be added to C:\WSL
-# There is a shortcut called Install WSL that will be added to the desktop via GPO than when launched, will trigger this script
+# This script is triggered by WSL_Install.bat
 
 ######## Create WSL Desktop Shortcut ##########################
 $ubuntu_shortcut_path = "$env:Public\Desktop\Ubuntu.lnk"

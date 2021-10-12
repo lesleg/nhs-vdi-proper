@@ -4,7 +4,8 @@ $ErrorActionPreference = "Stop"
 # Ensure that there is no disk encryption so that we can make an image from it after
 # Create a new file with the same name on the workspace, and copy in these contents. Then open a powershell window as administator and run the script.
 # powershell -ExecutionPolicy Bypass -File D:\path\to\vdi_build_script.ps1
-# After this script has run, ensure that all windows updates are installed and add WSL_Install.ps1 to C:\WSL
+# After this script has run, ensure that all windows updates are installed and add WSL_Install.ps1 and WSL_Install.bat to C:\WSL
+# Then pycharm needs to be configured following the instructions at https://nhsd-confluence.digital.nhs.uk/x/vRsiEw
 # TODO: Install all windows updates programmatically in this script
 
 Write-Host "Uninstalling unneeded applications"
