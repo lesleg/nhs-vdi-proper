@@ -1,4 +1,4 @@
-WORKSPACE_BUNDLE_ID = $(shell aws workspaces describe-workspace-bundles | jq '.Bundles[] | select(.Name=="DARE_VDI_Bundle_v0.4") | .BundleId')
+WORKSPACE_BUNDLE_ID = $(shell aws workspaces describe-workspace-bundles | jq '.Bundles[] | select(.Name=="DARE_VDI_Bundle_v0.7") | .BundleId')
 WORKSPACE_DIRECTORY_ID = $(shell aws ds describe-directories | jq '.DirectoryDescriptions[] | select(.ShortName=="dare") | .DirectoryId')
 WORKSPACE_REGISTRATION_CODE = $(shell aws workspaces describe-workspace-directories | jq '.Directories[] | select(.DirectoryId==${WORKSPACE_DIRECTORY_ID}) | .RegistrationCode')
 BUILD_REGION ?= "eu-west-2"
