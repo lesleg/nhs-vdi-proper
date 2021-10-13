@@ -2,6 +2,7 @@
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id       = aws_vpc.default.id
   service_name = "com.amazonaws.${var.region}.dynamodb"
+  policy       = data.aws_iam_policy_document.dynamodb.json
 
   route_table_ids = [
     aws_route_table.private_a.id,
@@ -14,9 +15,21 @@ resource "aws_vpc_endpoint" "dynamodb" {
   }
 }
 
+data "aws_iam_policy_document" "dynamodb" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      identifiers = ["*"]
+      type        = "*"
+    }
+  }
+}
+
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = aws_vpc.default.id
   service_name = "com.amazonaws.${var.region}.s3"
+  policy       = data.aws_iam_policy_document.s3.json
 
   route_table_ids = [
     aws_route_table.private_a.id,
@@ -29,12 +42,24 @@ resource "aws_vpc_endpoint" "s3" {
   }
 }
 
+data "aws_iam_policy_document" "s3" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      identifiers = ["*"]
+      type        = "*"
+    }
+  }
+}
+
 # AWS Resources with Interface endpoints
 resource "aws_vpc_endpoint" "rds" {
   vpc_id             = aws_vpc.default.id
   vpc_endpoint_type  = "Interface"
   service_name       = "com.amazonaws.${var.region}.rds"
   security_group_ids = [aws_security_group.rds_endpoint_sg.id]
+  policy             = data.aws_iam_policy_document.rds.json
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -46,6 +71,17 @@ resource "aws_vpc_endpoint" "rds" {
 
   tags = {
     Name = "rds-interface-endpoint"
+  }
+}
+
+data "aws_iam_policy_document" "rds" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      identifiers = ["*"]
+      type        = "*"
+    }
   }
 }
 
@@ -72,6 +108,7 @@ resource "aws_vpc_endpoint" "sqs" {
   vpc_endpoint_type  = "Interface"
   service_name       = "com.amazonaws.${var.region}.sqs"
   security_group_ids = [aws_security_group.sqs_endpoint_sg.id]
+  policy             = data.aws_iam_policy_document.sqs.json
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -83,6 +120,17 @@ resource "aws_vpc_endpoint" "sqs" {
 
   tags = {
     Name = "sqs-interface-endpoint"
+  }
+}
+
+data "aws_iam_policy_document" "sqs" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      identifiers = ["*"]
+      type        = "*"
+    }
   }
 }
 
@@ -116,6 +164,7 @@ resource "aws_vpc_endpoint" "sts" {
   vpc_endpoint_type  = "Interface"
   service_name       = "com.amazonaws.${var.region}.sts"
   security_group_ids = [aws_security_group.sts_endpoint_sg.id]
+  policy             = data.aws_iam_policy_document.sts.json
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -127,6 +176,17 @@ resource "aws_vpc_endpoint" "sts" {
 
   tags = {
     Name = "sts-interface-endpoint"
+  }
+}
+
+data "aws_iam_policy_document" "sts" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      identifiers = ["*"]
+      type        = "*"
+    }
   }
 }
 
