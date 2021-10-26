@@ -83,3 +83,14 @@ resource "aws_security_group" "workspaces_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_workspaces_ip_group" "HSCN" {
+  name        = "HSCN"
+  description = "HSCN IP access control group"
+
+  rules {
+    source      = ["3.10.167.180/32"]
+    description = "HSCN IP access control group"
+  }
+}
+
