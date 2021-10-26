@@ -89,7 +89,7 @@ resource "aws_workspaces_ip_group" "HSCN" {
   description = "HSCN IP access control group"
 
   rules {
-    source      = ["3.10.167.180/32"]
+    source      = "3.10.167.180/32"
     description = "HSCN IP access control group"
   }
 }
