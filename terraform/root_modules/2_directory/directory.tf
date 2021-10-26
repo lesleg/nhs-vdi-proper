@@ -37,7 +37,8 @@ resource "aws_workspaces_directory" "example" {
   ]
 
   workspace_creation_properties {
-    default_ou = "OU=Workspaces,OU=dare,DC=dare,DC=${var.environment},DC=local"
+    default_ou               = "OU=Workspaces,OU=dare,DC=dare,DC=${var.environment},DC=local"
+    custom_security_group_id = aws_security_group.workspaces_sg.id
   }
 
   workspace_access_properties {
@@ -59,4 +60,22 @@ resource "aws_kms_key" "workspace_encryption" {
 resource "aws_kms_alias" "workspace_encryption" {
   name          = "alias/workspace_encryption"
   target_key_id = aws_kms_key.workspace_encryption.id
+}
+
+resource "aws_security_group" "workspaces_sg" {
+  name        = "workspaces_sg"
+  description = "Security Group for Amazon Workspaces"
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
+
+  tags = {
+    Name = "workspaces-sg"
+  }
+
+  egress {
+    description = "Allow all egress"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
