@@ -57,6 +57,7 @@ resource "aws_flow_log" "vdi_vpc_flow_log" {
   traffic_type    = "ALL"
 }
 
+#tfsec:ignore:AWS089 We probably don't need to log access to logs
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name = "/vdi/vpc_flow_logs"
 }
@@ -81,6 +82,7 @@ resource "aws_iam_role" "vpc_flow_logs" {
 EOF
 }
 
+#tfsec:ignore:AWS099 Wildcard is ok for now
 resource "aws_iam_role_policy" "flow_logs_access_to_cloudwatch" {
   name = aws_iam_role.vpc_flow_logs.name
   role = aws_iam_role.vpc_flow_logs.id

@@ -1,3 +1,4 @@
+#tfsec:ignore:AWS065 We probably want encryption at rest
 resource "aws_cloudtrail" "cloudtrail" {
   name                          = "vdi-cloudtrail"
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
@@ -13,6 +14,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   }
 }
 
+#tfsec:ignore:AWS002 We probably don't need to log access to logs
 resource "aws_s3_bucket" "cloudtrail" {
   bucket = "${var.s3_bucket_prefix}-cloudtrail"
   acl    = "private"
@@ -114,6 +116,7 @@ resource "aws_iam_policy" "cloudtrail_logging_policy" {
   policy = data.aws_iam_policy_document.cloudtrail_logging_policy.json
 }
 
+#tfsec:ignore:AWS089 We probably don't need to log access to logs
 resource "aws_cloudwatch_log_group" "cloudtrail_log_group" {
   name = "/vdi/cloudtrail"
 }
