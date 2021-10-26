@@ -1,3 +1,4 @@
+#tfsec:ignore:GEN003 Remove when we no longer hardcode the dev password
 resource "aws_directory_service_directory" "connector" {
   name     = "dare.${var.environment}.local"
   password = local.ad_admin_password
@@ -20,6 +21,7 @@ resource "aws_directory_service_directory" "connector" {
   ]
 }
 
+#tfsec:ignore:AWS095 An AWS managed key is fine here
 resource "aws_secretsmanager_secret" "ad_admin_password" {
   name = "secret/active_directory/ad_admin_password"
 }
@@ -53,6 +55,7 @@ resource "aws_workspaces_directory" "example" {
   }
 }
 
+#tfsec:ignore:AWS019 Need to look into the implications of rotating keys used to encrypt workspaces
 resource "aws_kms_key" "workspace_encryption" {
   description = "Encryption key for workspace volumes"
 }
@@ -62,6 +65,7 @@ resource "aws_kms_alias" "workspace_encryption" {
   target_key_id = aws_kms_key.workspace_encryption.id
 }
 
+#tfsec:ignore:AWS009 This is a copy of the default workspaces SG to be customised later. Egress all is intended, but we can remove this if that changes
 resource "aws_security_group" "workspaces_sg" {
   name        = "workspaces_sg"
   description = "Security Group for Amazon Workspaces"

@@ -22,6 +22,18 @@ lint-terraform:
     - BUILD_ENV=dev MODULE=1_network make tf-validate
     - BUILD_ENV=dev MODULE=2_directory make tf-validate
 
+tfsec:
+  stage: lint
+  before_script: []
+  image: 603973933462.dkr.ecr.eu-west-2.amazonaws.com/terraform-tfsec:latest
+  only:
+    - master
+    - merge_requests
+  script:
+    - BUILD_ENV=dev MODULE=0_account_init make tf-tfsec
+    - BUILD_ENV=dev MODULE=1_network      make tf-tfsec
+    - BUILD_ENV=dev MODULE=2_directory    make tf-tfsec
+
 deploy-dev:
   stage: deploy-dev
   environment: dev

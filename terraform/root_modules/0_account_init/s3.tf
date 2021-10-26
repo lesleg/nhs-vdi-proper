@@ -1,3 +1,5 @@
+#tfsec:ignore:AWS002 We don't need to have logging enabled here
+#tfsec:ignore:AWS098 We may want to add a specific public access block, but there is an account one below
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "${data.aws_iam_account_alias.this.account_alias}-terraform-state"
 

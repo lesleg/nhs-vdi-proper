@@ -28,6 +28,10 @@ tf-fmt: ## Format terraform files
 tf-fmt-check: ## Check terraform file format (For use in CI, locally just use tf-fmt)
 	terraform fmt -recursive -check -diff
 
+.PHONY: tf-tfsec
+tf-tfsec: guard-MODULE guard-BUILD_ENV ## Run tfsec security analysis
+	cd terraform/root_modules/${MODULE} && terraform get && tfsec --tfvars-file=vars/${BUILD_ENV}.tfvars .
+
 # Terraform
 
 tf_chdir_arg=-chdir=terraform/root_modules/${MODULE}
