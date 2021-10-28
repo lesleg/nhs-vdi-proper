@@ -88,8 +88,13 @@ resource "aws_workspaces_ip_group" "HSCN" {
   name        = "HSCN"
   description = "HSCN IP access control group"
 
-  rules = [for range in var.hscn_network_cidrs : { description = range, source = range }]
-
+dynamic "rules" {
+    for_each = var.hscn_network_cidrs
+    content {
+      description = rules.value
+      source      = rules.value
+    }
+  }
 }
 
 
